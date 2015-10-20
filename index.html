@@ -3,9 +3,7 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<table class="table" border="1">
-<tr>
-<td>
+
 
 
 <p>Type: <div id="typeString">sine</div></p>
@@ -15,17 +13,11 @@
 <p ><input class="frequencyRange" multiple id="frequencyRange" type="range" min="5" max="20000" step="1" value="1000"></input></p>
 
 <p>Gain</p>
-<p ><input class="gainRange" multiple id="gainRange" type="range" min="0" max="100" step="1" value="100"></input></p>
-<p><button onclick="generate('sine', 1000)">Play!</button></p>
-</td>
-<td>
-<canvas width="500" height="500">
-</td>
+<p ><input class="gainRange" multiple id="gainRange" type="range" min="0" max="100" step="1" value="0"></input></p>
+<p><button onclick="generate('sine', 1000)">Play!</button><button id"checkboxRandom" onclick="playR()">Random notes</button></p>
 
-
-</tr>
 
 </table>
-
+<canvas width="500" height="100">
 
 </body>

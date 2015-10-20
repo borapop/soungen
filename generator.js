@@ -18,8 +18,8 @@ function generate(type, frequency) {
     var bufferLength = analyser.frequencyBinCount;
     console.log(bufferLength);
     var dataArray = new Uint8Array(bufferLength);
-    WIDTH = 
-    HEIGHT = 500;
+    WIDTH = 500;
+    HEIGHT = 100;
     var canvasContext = document.getElementsByTagName('canvas')[0].getContext('2d');
     canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
 
@@ -28,6 +28,7 @@ function generate(type, frequency) {
   oscillator.connect(analyser);
   analyser.connect(gainNode);
   gainNode.connect(audioContext.destination);
+
   function draw() {
     drawVisual = requestAnimationFrame(draw);
 
@@ -40,10 +41,10 @@ function generate(type, frequency) {
       var x = 0;
 
       for(var i = 0; i < bufferLength; i++) {
-          barHeight = dataArray[i]/2;
+          barHeight = dataArray[i];
 
-          canvasContext.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
-          canvasContext.fillRect(x,HEIGHT-barHeight/2,barWidth,barHeight);
+          canvasContext.fillStyle = 'rgb(' + (barHeight +150) + ',50,50)';
+          canvasContext.fillRect(x,HEIGHT-barHeight,barWidth,barHeight);
 
           x += barWidth + 1;
         }
@@ -75,6 +76,35 @@ function generate(type, frequency) {
 
   this.type = function(type) {
     oscillator.type = type;
+  };
+
+  this.randomMusic = function() {
+    var t = 50;
+    setTimeout(function play(){
+      t = Math.random() * 4;
+      
+      oscillator.frequency.value = Math.random() * 1000 //1 * 5000
+      setTimeout(play, t);
+    }, t);
+  }
+
+  this.randomNotes = function(pitch, maxInterval) {
+
+    var notes = [];
+    for (i = 0; i <= 36; i++) {
+      notes[i] = pitch * Math.pow(2, i/12);
+    }
+
+    var t = 0;
+
+    setTimeout(function play() {
+      setTimeout(500);
+      gainNode.gain.value = Math.floor(Math.random()+1);
+      t = Math.random() * maxInterval;
+      oscillator.frequency.value = notes[Math.floor(Math.random() * 36)];
+      setTimeout(play, t);
+
+    });
   };
 
 
@@ -109,13 +139,30 @@ function generate(type, frequency) {
       }
   };
 
+  //generator.randomMusic();
+
+
+  playRandomNotes = false;
+
   var frequencyRange = document.getElementById('frequencyRange');
   var frequencyNumber = document.getElementById('frequencyNumber');
+  var playRandomNotes = false;
+  var checkboxRandom = document.getElementById('checkboxRandom');
+
+  this.playR = function() {
+    playRandomNotes = true;
+  }
+
 
   frequencyRange.onchange = function() {
 
     generator.frequency(frequencyRange.value);
+    if (playRandomNotes) {
+      generator.randomNotes(frequencyRange.value, 500);
+    }
     frequencyNumber.value = frequencyRange.value;
+    
+    
 
   };
  
