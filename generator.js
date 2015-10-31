@@ -3,10 +3,17 @@ function generate(type, frequency) {
 
 
   var Generator = function(type, frequency) {
-  
 
 
-  var audioContext = new window.AudioContext() || window.webkitAudioContext();
+  if (navigator.userAgent.match(/iPhone|iPad|iPod/i)){
+
+    var audioContext = new window.webkitAudioContext();
+
+  } else {
+
+    var audioContext = new window.AudioContext();
+
+  }
   oscillator = audioContext.createOscillator();
 
 
@@ -107,6 +114,21 @@ function generate(type, frequency) {
     });
   };
 
+  this.octave = function(pitch, interval) {
+    var flag = false;
+      setTimeout(function play(){
+        flag = !flag;
+        if (flag) {
+          oscillator.frequency.value = pitch / 2;
+        } else {
+          oscillator.frequency.value = pitch * 2;
+        }
+
+      setTimeout(play, interval);
+      }, interval);
+    
+  };
+
 
 
   };
@@ -151,14 +173,14 @@ function generate(type, frequency) {
 
   this.playR = function() {
     playRandomNotes = true;
-  }
+  };
 
 
   frequencyRange.onchange = function() {
 
     generator.frequency(frequencyRange.value);
     if (playRandomNotes) {
-      generator.randomNotes(frequencyRange.value, 500);
+      generator.randomNotes(frequencyRange.value, 4);
     }
     frequencyNumber.value = frequencyRange.value;
     
