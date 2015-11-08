@@ -1,6 +1,3 @@
-function generate(type, frequency) {
-
-
 
   var Generator = function(type, frequency) {
 
@@ -12,52 +9,18 @@ function generate(type, frequency) {
   } else {
 
     var audioContext = new window.AudioContext();
-
   }
   oscillator = audioContext.createOscillator();
 
 
-  
-
-
-  var analyser = audioContext.createAnalyser();
-    analyser.fftSize = 256;
-    var bufferLength = analyser.frequencyBinCount;
-    console.log(bufferLength);
-    var dataArray = new Uint8Array(bufferLength);
-    WIDTH = 500;
-    HEIGHT = 100;
-    var canvasContext = document.getElementsByTagName('canvas')[0].getContext('2d');
-    canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
 
 
   var gainNode = audioContext.createGain();
-  oscillator.connect(analyser);
-  analyser.connect(gainNode);
+  oscillator.connect(gainNode);
   gainNode.connect(audioContext.destination);
 
-  function draw() {
-    drawVisual = requestAnimationFrame(draw);
 
-    analyser.getByteFrequencyData(dataArray);
-
-    canvasContext.fillStyle = 'rgb(0, 0, 0)';
-    canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
-    var barWidth = (WIDTH / bufferLength) * 2.5;
-      var barHeight;
-      var x = 0;
-
-      for(var i = 0; i < bufferLength; i++) {
-          barHeight = dataArray[i];
-
-          canvasContext.fillStyle = 'rgb(' + (barHeight +150) + ',50,50)';
-          canvasContext.fillRect(x,HEIGHT-barHeight,barWidth,barHeight);
-
-          x += barWidth + 1;
-        }
-      };
-
-  draw();
+  //draw();
 
   
 
@@ -89,6 +52,9 @@ function generate(type, frequency) {
     var t = 50;
     setTimeout(function play(){
       t = Math.random() * 4;
+      {
+        
+      }
       
       oscillator.frequency.value = Math.random() * 1000 //1 * 5000
       setTimeout(play, t);
@@ -114,6 +80,18 @@ function generate(type, frequency) {
     });
   };
 
+  var note = [];
+
+  for (i = 0; i <= 36; i++) {
+      note[i] = 440 * Math.pow(2, i/12);
+    }
+
+  this.playNote = function(octave, noteNumber) {
+    noteNumber += 2;
+    oscillator.frequency.value = note[octave * 12 + noteNumber];
+
+  };
+
   this.octave = function(pitch, interval) {
     var flag = false;
       setTimeout(function play(){
@@ -133,10 +111,70 @@ function generate(type, frequency) {
 
   };
 
-  var generator = new Generator(type, frequency);
-
+  var generator = new Generator('sine', 1)
+;
   generator.start();
 
+  function drawPiano(whiteKeys, size) {
+    var c = document.getElementById("piano-keys");
+    var ctx = c.getContext("2d");
+    var n = 0;
+    for (i = 0; i < whiteKeys; i++) {
+      ctx.rect(size + n + i*size*3, size*2, size*3, size*10);
+      if (!((i % 7 == 2) || (i % 7 == 6))) {
+        ctx.fillRect(size*3 + n + i*size*3, size*2, size*2, size*6);
+      }
+    }
+    ctx.stroke();
+    c.onclick = function(event) {
+      x = event.pageX - c.offsetLeft;
+      y = event.pageY - c.offsetTop;
+      console.log(x, y);
+      if ((y < size * 8) && (( (x / size) % 3 >  0) && ((x / size) % 3 < 2)) &&
+                            !((((x / size) % 21 > 0) && ((x / size) % 21 <2)) ||
+                            (((x / size) % 21 > 9) && ((x / size) % 21 < 11))) ) {
+        
+        if (          ((x / size) % 21 > 3) && ((x / size) % 21 < 5) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 2);
+          } else if ( ((x / size) % 21 > 6) && ((x / size) % 21 < 8) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 4);
+          } else if ( ((x / size) % 21 > 12) && ((x / size) % 21 < 14) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 7);
+          } else if ( ((x / size) % 21 > 15) && ((x / size) % 21 < 17) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 9);
+          } else if ( ((x / size) % 21 > 18) && ((x / size) % 21 < 20) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 11);
+          } 
+
+
+
+      } else {
+        if (y < 120 * size ) {
+
+        if (          ((x / size) % 21 > 1) && ((x / size) % 21 < 4) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 1);
+          } else if ( ((x / size) % 21 > 4) && ((x / size) % 21 < 7) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 3);
+          } else if ( ((x / size) % 21 > 7) && ((x / size) % 21 < 10) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 5);
+          } else if ( ((x / size) % 21 > 10) && ((x / size) % 21 < 13) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 6);
+          } else if ( ((x / size) % 21 > 13) && ((x / size) % 21 < 16) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 8);
+          } else if ( ((x / size) % 21 > 16) && ((x / size) % 21 < 19) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 10);
+          } else if ( ((x / size) % 21 > 19) || ((x / size) % 21 < 1) ) {
+            generator.playNote( Math.floor(x / (22 * size)) , 12);
+          }
+        }
+
+
+      }
+
+    };
+  };
+
+  drawPiano(15, 10);
 
   var typeRange = document.getElementById('typeRange');
   var typeString = document.getElementById('typeString');
@@ -161,20 +199,29 @@ function generate(type, frequency) {
       }
   };
 
-  //generator.randomMusic();
+  /*
+  var notesRange = document.getElementById('notesRange');
 
+  var keyboardScale = document.getElementById('keyboardScale');
 
-  playRandomNotes = false;
-
-  var frequencyRange = document.getElementById('frequencyRange');
-  var frequencyNumber = document.getElementById('frequencyNumber');
-  var playRandomNotes = false;
-  var checkboxRandom = document.getElementById('checkboxRandom');
-
-  this.playR = function() {
-    playRandomNotes = true;
+  
+  notesRange.onchange = function () {
+    var c = document.getElementById("piano-keys");
+    var ctx = c.getContext("2d");
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, c.width, c.height);
+    drawPiano(notesRange.value, keyboardScale.value);
   };
 
+  keyboardScale.onchange = function () {
+    var c = document.getElementById("piano-keys");
+    var ctx = c.getContext("2d");
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, c.width, c.height);
+    drawPiano(notesRange.value, keyboardScale.value);
+  };
+  */
+  /*
 
   frequencyRange.onchange = function() {
 
@@ -194,6 +241,7 @@ function generate(type, frequency) {
     frequencyRange.value = frequencyNumber.value;
 
   };
+  */
   
 
   var gainRange = document.getElementById('gainRange');
@@ -204,4 +252,3 @@ function generate(type, frequency) {
 
   };
   
-};

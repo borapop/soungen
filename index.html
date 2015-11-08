@@ -1,23 +1,34 @@
-<script src="./generator.js"></script>
+
 <head>
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
 
+<div id="typeString">sine</div>
+<p><input class="typeRange" multiple id="typeRange" type="range" min="1" max="4" step="1" value="1"></input></p>
 
-<p>Type: <div id="typeString">sine</div></p>
-<p ><input class="typeRange" multiple id="typeRange" type="range" min="1" max="4" step="1" value="1"></input></p>
-
+<!--
 <p>Frequency = <input type="text" id="frequencyNumber" value="440"></div></p>
 <p ><input class="frequencyRange" multiple id="frequencyRange" type="range" min="5" max="20000" step="1" value="440"></input></p>
 
-<p>Gain</p>
-<p ><input class="gainRange" multiple id="gainRange" type="range" min="0" max="100" step="1" value="0"></input></p>
 <p><button onclick="generate('sine', 440)">Play!</button><button id"checkboxRandom" onclick="playR()">Random notes</button></p>
+-->
+<p>Gain</p>
+<p><input class="gainRange" multiple id="gainRange" type="range" min="0" max="10" step="1" value="1"></input></p>
 
 
-</table>
-<canvas width="500" height="100">
 
+<!--
+<p>White notes number</p>
+<p><input class="notesRange" multiple id="notesRange" type="range" min="5" max="21" step="1" value="7"></input></p>
+<p>Scale</p>
+<p><input class="keyboardScale" multiple id="keyboardScale" type="range" min="5" max="50" step="1" value="10"></input></p>
+
+-->
+<!--canvas width="500" height="100"-->
+
+<canvas id="piano-keys" width="460" height="120">canvas is not supported</canvas>
+
+<script src="./generator.js"></script>
 </body>
